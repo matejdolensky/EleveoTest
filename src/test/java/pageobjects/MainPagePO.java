@@ -9,9 +9,9 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class MainPagePO {
 
-    public ResultsPO searchForConnections(String  nearestMondayDay, String nearestMondayMonth, String departureStation, String arrivalStation) {
+    public ResultsPO searchForConnections(String nearestMondayDay, String nearestMondayMonth, String departureStation, String arrivalStation) {
 
-        if (Utils.waitForVisibilityOfElement($(byText("Přejít na nový web")))){
+        if (Utils.waitForVisibilityOfElement($(byText("Přejít na nový web")))) {
             open("https://novy.regiojet.cz/sk?optimize=1");
         }
 
@@ -24,7 +24,6 @@ public class MainPagePO {
         $(".react-select__input-container.css-lwhfup .react-select__input", 1).setValue(arrivalStation).pressEnter();
 
         $(byText("Odchod")).sibling(0).click();
-
 
         $(byText(nearestMondayMonth)).parent().sibling(0).$(byText(nearestMondayDay)).click();
 

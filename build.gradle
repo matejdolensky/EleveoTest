@@ -26,6 +26,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
     testImplementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.32'
 
+    // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
+    implementation group: 'io.rest-assured', name: 'rest-assured', version: '4.4.0'
+
 }
 
 test {

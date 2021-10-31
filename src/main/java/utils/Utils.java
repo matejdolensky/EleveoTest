@@ -8,17 +8,21 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 
 import static enums.MonthsEnum.*;
 
 
+/**
+ * Helper utility class
+ */
 @UtilityClass
 @Slf4j
 public class Utils {
 
 
-    public static String connectionDate = findNearestMondayDay() + "." + getNearestMondayMonthValue() + "."  ;
+    public static String connectionDate = findNearestMondayDay() + "." + getNearestMondayMonthValue() + ".";
     public static String departureCityName;
     public static String arrivalCityName;
 
@@ -40,20 +44,33 @@ public class Utils {
         };
     }
 
-    public static String findNearestMondayMonthAndYear(){
+    /**
+     * @return nearest Monday in Month and year format
+     */
+    public static String findNearestMondayMonthAndYear() {
         int monthNumber = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).getMonthValue();
         return getMonthName(monthNumber) + " " + LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).getYear();
     }
 
-    public static String findNearestMondayDay(){
-       return String.valueOf(LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).getDayOfMonth());
+    /**
+     * @return nearest Monday in day format
+     */
+    public static String findNearestMondayDay() {
+        return String.valueOf(LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).getDayOfMonth());
     }
 
-    private static String getNearestMondayMonthValue(){
+    private static String getNearestMondayMonthValue() {
         return String.valueOf(LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).getMonthValue());
     }
 
-    public boolean waitForVisibilityOfElement(SelenideElement element){
+
+    /**
+     * Helper method which waits for 4s for visibility of desired elements and won't throw element not found exception
+     *
+     * @param element - element which visibility should be wait for
+     * @return - elements visibility on page
+     */
+    public boolean waitForVisibilityOfElement(SelenideElement element) {
         try {
             element.shouldBe(Condition.visible);
             return true;
@@ -64,4 +81,10 @@ public class Utils {
         }
     }
 
+    /**
+     * @return nearest Monday in format for BE tests
+     */
+    public static String findNearestMondayForBE() {
+        return LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
 }

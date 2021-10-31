@@ -2,6 +2,9 @@ package data;
 
 import lombok.Data;
 
+/**
+ * Data class for FE connection details
+ */
 @Data
 public class ConnectionDto {
     private String departureTime;

@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +48,12 @@ public class ResultsPO {
     }
 
 
+    /**
+     * Method for collecting connections on FE - method opens all connections which meets input criteria and gather all
+     * necessary information such as arrival and departure time, station names, price and number of stops
+     *
+     * @return List of all available connections
+     */
     private List<ConnectionDto> getAllAvailableConnections() {
         $$(".h-full.pb-1\\.5.flex.flex-col.justify-between").shouldBe(CollectionCondition.sizeGreaterThan(0), 10000);
 
@@ -61,15 +66,16 @@ public class ResultsPO {
             ConnectionDto connection = new ConnectionDto();
             selenideElement.scrollTo();
 
+            connection.setIsDirect(selenideElement.$(byText("Priame spojenie")).exists());
 
-            if (!selenideElement.$(byText("Vypredané")).isDisplayed()) {
+
+            if (!selenideElement.$(byText("Vypredané")).isDisplayed() && connection.getIsDirect()) {
                 selenideElement.$("svg", 0).click();
                 connection.setPrice(Integer.parseInt(selenideElement.$("button").getText().replace("od", "").replace("CZK", "").replaceAll("\\s", "")));
 
                 connection.setTravelTime(selenideElement.$("span").getOwnText().split(" ")[0]);
-                connection.setIsDirect(selenideElement.$(byText("Priame spojenie")).exists());
 
-                if (connection.getIsDirect()) {
+
                     SelenideElement clientCard = selenideElement.$(".cardOpenTransferContainer.cardOpenTransferContainer-first");
 
                     clientCard.$(".cardOpenTransfer.font-bold.sm\\:text-14.self-center").shouldBe(Condition.visible);
@@ -83,37 +89,18 @@ public class ResultsPO {
 
                     connection.setArrivalTime(connectionDetails.get(connectionDetails.size() - 2).getOwnText());
                     connection.setArrivalStationName(connectionDetails.get(connectionDetails.size() - 1).getOwnText().replace("\n", "").replace("\r", ""));
-                } else {
-                    selenideElement.$$(".cardOpenTransferContainer.cardOpenTransferContainer").shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2));
-                    List<SelenideElement> clientCards = selenideElement.$$(".cardOpenTransferContainer.cardOpenTransferContainer");
-                    List<SelenideElement> departureDetails = clientCards.get(0).$$(".cardOpenTransfer.font-bold.sm\\:text-14");
-                    List<SelenideElement> arrivalDetails = clientCards.get(clientCards.size() - 1).$$(".cardOpenTransfer.font-bold.sm\\:text-14");
 
-                    connection.setConnectionDate(clientCards.get(0).$(".col-span-3.font-bold.sm\\:text-14.hidden").getOwnText());
-
-                    connection.setDepartureTime(departureDetails.get(0).getOwnText());
-                    connection.setDepartureStationName(departureDetails.get(1).getOwnText().replace("\n", "").replace("\r", ""));
-
-                    connection.setArrivalTime(arrivalDetails.get(arrivalDetails.size() - 2).getOwnText());
-                    connection.setArrivalStationName(arrivalDetails.get(arrivalDetails.size() - 1).getOwnText().replace("\n", "").replace("\r", ""));
-
-
-                }
-
-                List<SelenideElement> connections = selenideElement.$$(".text-13.lg\\:text-14.group-hover\\:underline");
-
-                connections.forEach(element -> {
-                    element.click();
+                selenideElement.$(".text-13.lg\\:text-14.group-hover\\:underline").click();
                     SelenideElement wrapper = $(".modal-wrapper");
                     wrapper.shouldBe(Condition.visible);
                     int numberOfStops = wrapper.$$(".flex-auto.h-4.flex.items-center.text-primary-blue").size() - 1;
                     connection.setNumberOfStops(connection.getNumberOfStops() + numberOfStops);
                     $(by("aria-label", "Zavřít okno.")).click();
-                });
+
                 selenideElement.$("svg", 0).click();
                 results.add(connection);
             } else {
-                log.info("Connection is not available.");
+                log.debug("Connection is not available.");
             }
         });
 

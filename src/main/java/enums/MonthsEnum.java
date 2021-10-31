@@ -1,5 +1,9 @@
 package enums;
 
+/**
+ * Months enum class, mainly as a helper for dealing with FE calendar
+ */
+
 public enum MonthsEnum {
     JANUARY("január"),
     FEBRUARY("február"),

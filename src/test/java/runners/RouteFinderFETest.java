@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
 import pageobjects.MainPagePO;
 import pageobjects.ResultsPO;
+import testbase.TestBase;
 import utils.Utils;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.List;
 import static com.codeborne.selenide.Selenide.open;
 
 @Slf4j
-class RouteFinderTest {
+class RouteFinderFETest extends TestBase {
 
     String nearestMondayMonth;
     String nearestMondayDay;
@@ -25,12 +26,11 @@ class RouteFinderTest {
 
     @BeforeEach
     public void openUrl() {
-        open("https://shop.regiojet.sk/");
+        open(getProperties().getProperty("fe.url"));
         nearestMondayMonth = Utils.findNearestMondayMonthAndYear();
         nearestMondayDay = Utils.findNearestMondayDay();
         Utils.arrivalCityName = BRNO;
         Utils.departureCityName = OSTRAVA;
-
     }
 
     @Test
